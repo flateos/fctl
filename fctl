@@ -29,6 +29,8 @@ function help() {
 Usage: fctl [command] [options]
 
   workspace             Workspace manager for sway.
+  system                Obtain system-related information.
+  print                 Print Screen.
 
 EOM
 }
@@ -37,8 +39,53 @@ function workspace() {
     case $flag in
     '-s'|'--set')
         swaymsg workspace $args;;
-    *)
+
+    '-c'|'--current')
         swaymsg -t get_outputs | jq '.[] | .current_workspace' | sed 's/"//g';;
+
+    *)
+        help;;
+    esac
+}
+
+function system() {
+    case $flag in
+    '-m'|'--memory')
+        printf "%.0f\n" $(free -m | grep Mem | awk '{print ($3/$2)*100}');;
+
+    '-c'|'--cpu')
+        top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print 100 - $1}';;
+
+    '-d'|'--disk')
+        df --output=pcent / | grep -E -o "[0-9]+";;
+
+    '-h'|'--host')
+        echo "$(whoami)@$(hostname)";;
+
+    *)
+        help;;
+    esac
+}
+
+function print() {
+    local OUTPUT="$HOME/Pictures/Screenshots"
+    local FILE_NAME="screenshot-$(date +"%d-%m-%Y %H:%M:%S").png"
+
+    [[ ! -d $OUTPUT ]] && mkdir -p $OUTPUT
+
+   case $flag in
+    '-a'|'--area')
+            grim -g "$(
+                swaymsg -t get_tree \
+                    | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' \
+                    | slurp -o
+            )" "$OUTPUT/$FILE_NAME"
+
+           [[ ! ($? -eq 0) ]] && exit
+        ;;
+
+    *)
+        help;;
     esac
 }
 
@@ -46,6 +93,10 @@ function main() {
     case $cmd in
     'workspace')
         workspace;;
+    'system')
+        system;;
+    'print')
+        print;;
     *)
         help;;
     esac
