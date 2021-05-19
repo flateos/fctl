@@ -30,7 +30,9 @@ Usage: fctl [command] [options]
 
   workspace             Workspace manager for sway.
   system                Obtain system-related information.
+  record                Video and audio recording.
   print                 Print Screen.
+
 
 EOM
 }
@@ -89,12 +91,28 @@ function print() {
     esac
 }
 
+function record() {
+    case $flag in
+    '-s'|'--screen')
+        local OUTPUT=$HOME/Videos
+        local FILE_NAME="video-$(date +"%d-%m-%Y:%H:%M:%S").mp4"
+
+        [[ ! -d $OUTPUT ]] && mkdir -p $OUTPUT
+
+        wf-recorder -a --file=$OUTPUT/$FILE_NAME;;
+    *)
+        help;;
+    esac
+}
+
 function main() {
     case $cmd in
     'workspace')
         workspace;;
     'system')
         system;;
+    'record')
+        record;;
     'print')
         print;;
     *)
