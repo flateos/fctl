@@ -64,6 +64,11 @@ function system() {
     '-h'|'--host')
         echo "$(whoami)@$(hostname)";;
 
+    '-n'|'--net')
+        local STATS=`ping -c2 8.8.8.8 | grep 'received' | awk -F',' '{ print $2}' | awk '{ print $1}'`
+
+        [[ $STATS -eq 2 ]] && echo connected || not-connected;;
+
     *)
         help;;
     esac
@@ -140,7 +145,7 @@ function record() {
     ;;
 
     '-st'|'--screen-state')
-        [[ -n "$(pgrep wf-recorder)" ]] && echo "Recording" || echo "Stopped"
+        [[ -n "$(pgrep wf-recorder)" ]] && echo recording || echo stopped
     ;;
 
     *)
