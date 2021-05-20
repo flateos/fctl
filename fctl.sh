@@ -75,18 +75,18 @@ function print() {
 
     [[ ! -d $OUTPUT ]] && mkdir -p $OUTPUT
 
-   case $flag in
+    case $flag in
     '-a'|'--area')
-            grim -g "$(
-                swaymsg -t get_tree \
-                    | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' \
-                    | slurp -o
-            )" "$OUTPUT/$FILE_NAME"
+        grim -g "$(
+            swaymsg -t get_tree \
+                | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' \
+                | slurp -o
+        )" "$OUTPUT/$FILE_NAME"
 
-           [[ ! ($? -eq 0) ]] && exit
+        [[ ! ($? -eq 0) ]] && exit
 
-           notify-send "Screenshot saved to: $OUTPUT/$FILE_NAME"
-        ;;
+        notify-send "Screenshot saved to: $OUTPUT/$FILE_NAME"
+    ;;
 
     *)
         help;;
@@ -115,7 +115,7 @@ $f0████$d█$t  $f1████$d█$t  $f2████$d█$t  $f3█�
 $f0████$d█$t  $f1████$d█$t  $f2████$d█$t  $f3████$d█$t  $f4████$d█$t  $f5████$d█$t  $f6████$d█$t  $f7████$d█$t
 $d$f0 ▀▀▀▀  $d$f1 ▀▀▀▀   $f2▀▀▀▀   $f3▀▀▀▀   $f4▀▀▀▀   $f5▀▀▀▀   $f6▀▀▀▀   $f7▀▀▀▀$t
 EOF
-;;
+    ;;
 
     *)
         help;;
@@ -130,7 +130,19 @@ function record() {
 
         [[ ! -d $OUTPUT ]] && mkdir -p $OUTPUT
 
-        wf-recorder -a --file=$OUTPUT/$FILE_NAME;;
+        if [[ -z "$(pgrep wf-recorder)" ]]; then
+            notify-send "Recording"
+            wf-recorder -a --file=$OUTPUT/$FILE_NAME
+        else
+            notify-send "Recording saved to: $OUTPUT/$FILE_NAME"
+            pkill --signal SIGINT wf-recorder
+        fi
+    ;;
+
+    '-st'|'--screen-state')
+        [[ -n "$(pgrep wf-recorder)" ]] && echo "Recording" || echo "Stopped"
+    ;;
+
     *)
         help;;
     esac
