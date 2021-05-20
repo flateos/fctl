@@ -69,6 +69,10 @@ function system() {
 
         [[ $STATS -eq 2 ]] && echo connected || not-connected;;
 
+    '-u'|'--updates')
+        [[ -n "$(checkupdates)" ]] && echo yes || echo no
+    ;;
+
     *)
         help;;
     esac
