@@ -26,6 +26,8 @@ declare args="${@:3}"
 
 function help() {
     cat <<EOM
+
+Description: Environment manager for FlateOS.
 Usage: fctl [command] [options]
 
   workspace             Workspace manager for sway.
@@ -33,6 +35,8 @@ Usage: fctl [command] [options]
   record                Video and audio recording.
   print                 Print Screen.
   theme                 Theme Manager.
+  widget                Widget Manager.
+
 
 EOM
 }
@@ -56,7 +60,7 @@ function system() {
         printf "%.0f\n" $(free -m | grep Mem | awk '{print ($3/$2)*100}');;
 
     '-c'|'--cpu')
-        top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print 100 - $1}';;
+        top -b -n1 | grep "Cpu(s)" | awk '{print $2 + $4}';;
 
     '-d'|'--disk')
         df --output=pcent / | grep -E -o "[0-9]+";;
@@ -157,6 +161,17 @@ function record() {
     esac
 }
 
+function widget() {
+    case $flag in
+    '-o'|'--open')
+        eww kill; eww daemon; sleep 5; eww open-many $args
+    ;;
+
+    *)
+        help;;
+    esac
+}
+
 function main() {
     case $cmd in
     'workspace')
@@ -169,6 +184,8 @@ function main() {
         print;;
     'theme')
         theme;;
+    'widget')
+        widget;;
     *)
         help;;
     esac
