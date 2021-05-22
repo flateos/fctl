@@ -164,7 +164,8 @@ function record() {
 function widget() {
     case $flag in
     '-o'|'--open')
-        eww kill; eww daemon; sleep 5; eww open-many $args
+        [[ -z $(pgrep eww) ]] && eww daemon --debug && sleep 1 || eww close-all
+        eww open-many $args
     ;;
 
     *)
