@@ -29,14 +29,12 @@ function help() {
 
 Description: Environment manager for FlateOS.
 Usage: fctl [command] [options]
-
   workspace             Workspace manager for sway.
   system                Obtain system-related information.
   record                Video and audio recording.
   print                 Print Screen.
   theme                 Theme Manager.
   widget                Widget Manager.
-
 
 EOM
 }
@@ -123,11 +121,25 @@ function theme() {
 
 
 cat << EOF
-$f0████$d▄$t  $f1████$d▄$t  $f2████$d▄$t  $f3████$d▄$t  $f4████$d▄$t  $f5████$d▄$t  $f6████$d▄$t  $f7████$d▄$t
-$f0████$d█$t  $f1████$d█$t  $f2████$d█$t  $f3████$d█$t  $f4████$d█$t  $f5████$d█$t  $f6████$d█$t  $f7████$d█$t
-$f0████$d█$t  $f1████$d█$t  $f2████$d█$t  $f3████$d█$t  $f4████$d█$t  $f5████$d█$t  $f6████$d█$t  $f7████$d█$t
-$d$f0 ▀▀▀▀  $d$f1 ▀▀▀▀   $f2▀▀▀▀   $f3▀▀▀▀   $f4▀▀▀▀   $f5▀▀▀▀   $f6▀▀▀▀   $f7▀▀▀▀$t
+
+  $f0████$d▄$t  $f1████$d▄$t  $f2████$d▄$t  $f3████$d▄$t  $f4████$d▄$t  $f5████$d▄$t  $f6████$d▄$t  $f7████$d▄$t
+  $f0████$d█$t  $f1████$d█$t  $f2████$d█$t  $f3████$d█$t  $f4████$d█$t  $f5████$d█$t  $f6████$d█$t  $f7████$d█$t
+  $f0████$d█$t  $f1████$d█$t  $f2████$d█$t  $f3████$d█$t  $f4████$d█$t  $f5████$d█$t  $f6████$d█$t  $f7████$d█$t
+  $d$f0 ▀▀▀▀  $d$f1 ▀▀▀▀   $f2▀▀▀▀   $f3▀▀▀▀   $f4▀▀▀▀   $f5▀▀▀▀   $f6▀▀▀▀   $f7▀▀▀▀$t
+
 EOF
+    ;;
+
+    '-st'|'--set-theme')
+        gsettings set org.gnome.desktop.interface gtk-theme $args
+    ;;
+
+    '-sw'|'--set-wm')
+        gsettings set org.gnome.desktop.wm.preferences theme $args
+    ;;
+
+    '-si'|'--set-icon')
+        gsettings set org.gnome.desktop.interface icon-theme $args
     ;;
 
     *)
