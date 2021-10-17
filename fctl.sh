@@ -64,7 +64,7 @@ function system() {
         df --output=pcent / | grep -E -o "[0-9]+";;
 
     '-h'|'--host')
-        echo "$(whoami)@$(hostname)";;
+        echo "$(whoami)@$(cat /etc/hostname)";;
 
     '-n'|'--net')
         local STATS=`ping -c2 8.8.8.8 | grep 'received' | awk -F',' '{ print $2}' | awk '{ print $1}'`
